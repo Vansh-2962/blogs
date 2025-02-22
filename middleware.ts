@@ -5,6 +5,7 @@ const isProtectedRoute = createRouteMatcher(["/blog", "/bookmarks"]);
 
 export default clerkMiddleware(
   async (auth, req) => {
+    if (req.nextUrl.pathname.startsWith("/api")) return;
     if (isProtectedRoute(req)) {
       await auth.protect();
     }
