@@ -49,10 +49,27 @@ export async function POST(req: Request) {
   console.log(payload.data.email_addresses[0].email_address);
 
   const eventType = evt.type;
-  const event_data = evt.data;
   // store the data in the Database.
   if (eventType === "user.created") {
     try {
+      const userExists = await prisma.user.findFirst({
+        where: {
+          email: payload.data.email_addresses[0].email_address,
+        },
+      });
+      if (!userExists) {
+        const user = await prisma.user.create({
+          data: {
+            email: payload.data.email_addresses[0].email_address,
+            name: payload.data.firstname + " " + payload.data.lastname,
+            profilePic: payload.data.image_url,
+            password: "defaultPassword",
+          },
+        });
+        console.log(user);
+      }
+      console.log(userExists);
+      console.log("[USER_CREATED]");
     } catch (error) {
       console.log("[ERROR_IN_STORING_USER_INFO_IN_DB]", error);
     }
