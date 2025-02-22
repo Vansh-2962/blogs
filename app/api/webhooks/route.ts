@@ -1,6 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -32,7 +33,6 @@ export async function POST(req: Request) {
   const body = JSON.stringify(payload);
 
   let evt: WebhookEvent;
-
   // Verify payload with headers
   try {
     evt = wh.verify(body, {
@@ -46,13 +46,17 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
+  console.log(payload.data.email_addresses[0].email_address);
 
-  // Do something with payload
-  // For this guide, log payload to console
-  const { id } = evt.data;
   const eventType = evt.type;
-  console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
-  console.log("Webhook payload:", body);
+  const event_data = evt.data;
+  // store the data in the Database.
+  if (eventType === "user.created") {
+    try {
+    } catch (error) {
+      console.log("[ERROR_IN_STORING_USER_INFO_IN_DB]", error);
+    }
+  }
 
-  return new Response("Webhook received", { status: 200 });
+  return new Response("OK", { status: 200 });
 }
