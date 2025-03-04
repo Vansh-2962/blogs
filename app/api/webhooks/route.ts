@@ -46,7 +46,6 @@ export async function POST(req: Request) {
       status: 400,
     });
   }
-  console.log(payload.data.email_addresses[0].email_address);
 
   const eventType = evt.type;
   // store the data in the Database.
@@ -58,7 +57,7 @@ export async function POST(req: Request) {
         },
       });
       if (!userExists) {
-        const user = await prisma.user.create({
+        await prisma.user.create({
           data: {
             email: payload.data.email_addresses[0].email_address,
             name: payload.data.first_name + " " + payload.data.last_name,
@@ -66,12 +65,10 @@ export async function POST(req: Request) {
             password: "defaultPassword",
           },
         });
-        console.log(user);
       }
-      console.log(userExists);
-      console.log("[USER_CREATED]");
     } catch (error) {
       console.log("[ERROR_IN_STORING_USER_INFO_IN_DB]", error);
+      throw error;
     }
   }
 

@@ -36,6 +36,7 @@ model Blog {
   content           String
   subtitle          String?
   coverImg          String?
+  category          String
   
   author            User                    @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId          String
@@ -53,7 +54,7 @@ model Comment {
   authorId          String
   content           String
   blog              Blog                    @relation(fields: [blogId], references: [id], onDelete: Cascade)
-  blogId            String
+  blogId            String                  
   createdAt         DateTime                @default(now())
 }
 
